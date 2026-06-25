@@ -1,0 +1,37 @@
+{
+  "id": "com.quickcuts.transitionbuilder",
+  "name": "Quick Transition Builder",
+  "version": "1.0.0",
+  "manifestVersion": 6,
+  "host": [
+    {
+      "app": "PPRO",
+      "minVersion": "25.0"
+    }
+  ],
+  "entrypoints": [
+    {
+      "type": "panel",
+      "id": "main-panel",
+      "label": {
+        "default": "Quick Transition Builder"
+      },
+      "main": "dist/index.html",
+      "minimumSize": {
+        "width": 280,
+        "height": 520
+      },
+      "maximumSize": {
+        "width": 800,
+        "height": 2000
+      },
+      "preferredDockedSize": {
+        "width": 320,
+        "height": 680
+      }
+    }
+  ],
+  "requiredPermissions": {
+    "allowCodeGenerationFromStrings": false
+  }
+}

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quick Transition Builder</title>
+</head>
+<body>
+  <div id="app">
+
+    <!-- HEADER -->
+    <header class="panel-header">
+      <div class="header-left">
+        <svg class="logo-icon" viewBox="0 0 20 20" fill="none">
+          <path d="M10 2L18 7V13L10 18L2 13V7L10 2Z" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M10 6L14 8.5V13L10 15.5L6 13V8.5L10 6Z" fill="currentColor" opacity="0.5"/>
+        </svg>
+        <span class="panel-title">Quick Transitions</span>
+      </div>
+      <div id="clip-status" class="clip-status clip-status--none">
+        <span class="status-dot"></span>
+        <span id="clip-name-label">No clip selected</span>
+      </div>
+    </header>
+
+    <!-- SECTION 1: CATEGORIES -->
+    <section class="panel-section">
+      <div class="section-header">
+        <span class="section-label">CATEGORY</span>
+      </div>
+      <nav id="category-nav" class="category-nav"></nav>
+    </section>
+
+    <!-- SECTION 2: TRANSITIONS -->
+    <section class="panel-section">
+      <div class="section-header">
+        <span class="section-label">TRANSITION</span>
+        <span id="preset-count" class="preset-count"></span>
+      </div>
+      <div id="transition-grid" class="transition-grid"></div>
+    </section>
+
+    <!-- SECTION 3: OPTIONS -->
+    <section class="panel-section section--options">
+      <div class="section-header">
+        <span class="section-label">PLACEMENT</span>
+      </div>
+      <div class="placement-row">
+        <button id="btn-beginning" class="placement-btn placement-btn--active" data-placement="beginning">
+          <svg viewBox="0 0 16 16"><path d="M3 3v10M6 8l5-4v8L6 8z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+          Beginning
+        </button>
+        <button id="btn-end" class="placement-btn" data-placement="end">
+          <svg viewBox="0 0 16 16"><path d="M13 3v10M10 8L5 4v8l5-4z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+          End
+        </button>
+      </div>
+
+      <div class="duration-row">
+        <span class="section-label">DURATION</span>
+        <div class="duration-control">
+          <input type="range" id="duration-slider" min="4" max="60" value="12" class="duration-slider" />
+          <div class="duration-display">
+            <span id="duration-frames">12</span>
+            <span class="duration-unit">frames</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: APPLY -->
+    <section class="panel-section section--apply">
+      <button id="apply-btn" class="apply-btn" disabled>
+        <svg viewBox="0 0 16 16"><path d="M2 8h12M8 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+        Apply Transition
+      </button>
+      <div id="feedback-message" class="feedback-message"></div>
+    </section>
+
+  </div>
+
+  <script type="module" src="./src/main.ts"></script>
+</body>
+</html>
