@@ -1,5 +1,8 @@
 (function() {
   "use strict";
+  var __vite_style__ = document.createElement("style");
+  __vite_style__.textContent = "/* ============================================================\n   Quick Transition Builder — Panel Styles\n   Target: Adobe UXP / Premiere Pro 26\n   Design: Dark theme matching Premiere's default dark UI\n   ============================================================ */\n\n/* ── Reset ── */\n*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }\n\n/* ── Root Variables ── */\n:root {\n  --bg-panel:      #1a1a1a;\n  --bg-section:    #222222;\n  --bg-element:    #2e2e2e;\n  --bg-hover:      #3a3a3a;\n  --bg-active:     #0f4c8a;\n  --bg-active-h:   #1565c0;\n  --border:        #3d3d3d;\n  --border-light:  #4a4a4a;\n  --text-primary:  #e0e0e0;\n  --text-secondary:#9e9e9e;\n  --text-muted:    #6e6e6e;\n  --accent:        #2196f3;\n  --accent-h:      #42a5f5;\n  --success:       #4caf50;\n  --error:         #f44336;\n  --warning:       #ff9800;\n  --radius-sm:     4px;\n  --radius-md:     6px;\n  --radius-lg:     8px;\n  --font:          'Adobe Clean', 'Segoe UI', system-ui, sans-serif;\n  --font-mono:     'Adobe Clean Mono', 'Consolas', monospace;\n}\n\n/* ── Body ── */\nhtml, body {\n  background: var(--bg-panel);\n  color: var(--text-primary);\n  font-family: var(--font);\n  font-size: 12px;\n  line-height: 1.4;\n  height: 100%;\n  overflow-x: hidden;\n  -webkit-font-smoothing: antialiased;\n}\n\n/* ── App Container ── */\n#app {\n  display: flex;\n  flex-direction: column;\n  min-height: 100vh;\n  padding-bottom: 8px;\n}\n\n/* ── HEADER ── */\n.panel-header {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  padding: 8px 10px;\n  background: #161616;\n  border-bottom: 1px solid var(--border);\n  min-height: 36px;\n}\n\n.header-left {\n  display: flex;\n  align-items: center;\n  gap: 6px;\n}\n\n.logo-icon {\n  width: 16px;\n  height: 16px;\n  color: var(--accent);\n  flex-shrink: 0;\n}\n\n.panel-title {\n  font-size: 12px;\n  font-weight: 600;\n  color: var(--text-primary);\n  letter-spacing: 0.02em;\n}\n\n/* Clip status indicator */\n.clip-status {\n  display: flex;\n  align-items: center;\n  gap: 5px;\n  font-size: 11px;\n  color: var(--text-muted);\n  max-width: 140px;\n  overflow: hidden;\n}\n\n.clip-status .status-dot {\n  width: 6px;\n  height: 6px;\n  border-radius: 50%;\n  background: var(--text-muted);\n  flex-shrink: 0;\n}\n\n.clip-status--selected .status-dot { background: var(--success); }\n.clip-status--selected { color: var(--text-secondary); }\n.clip-status--none .status-dot { background: var(--text-muted); }\n\n#clip-name-label {\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n\n/* ── PANEL SECTIONS ── */\n.panel-section {\n  padding: 10px;\n  border-bottom: 1px solid var(--border);\n}\n\n.section-header {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  margin-bottom: 7px;\n}\n\n.section-label {\n  font-size: 10px;\n  font-weight: 600;\n  color: var(--text-muted);\n  letter-spacing: 0.08em;\n  text-transform: uppercase;\n}\n\n.preset-count {\n  font-size: 10px;\n  color: var(--text-muted);\n}\n\n/* ── CATEGORY NAV ── */\n.category-nav {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 4px;\n}\n\n.category-btn {\n  padding: 4px 9px;\n  border-radius: var(--radius-sm);\n  border: 1px solid var(--border);\n  background: var(--bg-element);\n  color: var(--text-secondary);\n  font-size: 11px;\n  cursor: pointer;\n  transition: background 0.12s, color 0.12s, border-color 0.12s;\n  white-space: nowrap;\n}\n\n.category-btn:hover {\n  background: var(--bg-hover);\n  border-color: var(--border-light);\n  color: var(--text-primary);\n}\n\n.category-btn--active {\n  background: var(--bg-active);\n  border-color: var(--accent);\n  color: #fff;\n}\n\n.category-btn--active:hover {\n  background: var(--bg-active-h);\n}\n\n/* ── TRANSITION GRID ── */\n.transition-grid {\n  display: grid;\n  grid-template-columns: repeat(2, 1fr);\n  gap: 4px;\n  max-height: 280px;\n  overflow-y: auto;\n  scrollbar-width: thin;\n  scrollbar-color: var(--border) transparent;\n}\n\n.transition-grid::-webkit-scrollbar { width: 5px; }\n.transition-grid::-webkit-scrollbar-track { background: transparent; }\n.transition-grid::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }\n\n.transition-card {\n  padding: 7px 9px;\n  border-radius: var(--radius-sm);\n  border: 1px solid var(--border);\n  background: var(--bg-element);\n  cursor: pointer;\n  transition: background 0.1s, border-color 0.1s;\n  display: flex;\n  flex-direction: column;\n  gap: 2px;\n  position: relative;\n  overflow: hidden;\n}\n\n.transition-card:hover {\n  background: var(--bg-hover);\n  border-color: var(--border-light);\n}\n\n.transition-card--selected {\n  border-color: var(--accent);\n  background: rgba(33, 150, 243, 0.12);\n}\n\n.transition-card--selected:hover {\n  background: rgba(33, 150, 243, 0.18);\n}\n\n.card-name {\n  font-size: 11px;\n  font-weight: 500;\n  color: var(--text-primary);\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n\n.card-meta {\n  display: flex;\n  align-items: center;\n  gap: 6px;\n}\n\n.card-duration {\n  font-size: 10px;\n  color: var(--text-muted);\n  font-family: var(--font-mono);\n}\n\n.card-params {\n  display: flex;\n  gap: 3px;\n}\n\n.param-badge {\n  font-size: 9px;\n  padding: 1px 4px;\n  border-radius: 2px;\n  background: var(--bg-panel);\n  color: var(--text-muted);\n  border: 1px solid var(--border);\n  text-transform: uppercase;\n  letter-spacing: 0.04em;\n}\n\n.param-badge--scale    { border-color: #1565c0; color: #64b5f6; }\n.param-badge--position { border-color: #1b5e20; color: #81c784; }\n.param-badge--rotation { border-color: #4a148c; color: #ce93d8; }\n.param-badge--opacity  { border-color: #e65100; color: #ffb74d; }\n\n/* ── OPTIONS SECTION ── */\n.section--options {}\n\n.placement-row {\n  display: flex;\n  gap: 6px;\n  margin-bottom: 10px;\n}\n\n.placement-btn {\n  flex: 1;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  gap: 6px;\n  padding: 7px 10px;\n  border-radius: var(--radius-sm);\n  border: 1px solid var(--border);\n  background: var(--bg-element);\n  color: var(--text-secondary);\n  font-size: 11px;\n  font-weight: 500;\n  cursor: pointer;\n  transition: background 0.12s, border-color 0.12s, color 0.12s;\n}\n\n.placement-btn svg {\n  width: 14px;\n  height: 14px;\n  flex-shrink: 0;\n}\n\n.placement-btn:hover {\n  background: var(--bg-hover);\n  border-color: var(--border-light);\n  color: var(--text-primary);\n}\n\n.placement-btn--active {\n  background: var(--bg-active);\n  border-color: var(--accent);\n  color: #fff;\n}\n\n.placement-btn--active:hover {\n  background: var(--bg-active-h);\n}\n\n/* Duration control */\n.duration-row {\n  display: flex;\n  flex-direction: column;\n  gap: 6px;\n}\n\n.duration-control {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n}\n\n.duration-slider {\n  flex: 1;\n  -webkit-appearance: none;\n  height: 3px;\n  border-radius: 2px;\n  background: var(--border);\n  cursor: pointer;\n  outline: none;\n}\n\n.duration-slider::-webkit-slider-thumb {\n  -webkit-appearance: none;\n  width: 12px;\n  height: 12px;\n  border-radius: 50%;\n  background: var(--accent);\n  cursor: pointer;\n  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.3);\n}\n\n.duration-slider::-moz-range-thumb {\n  width: 12px;\n  height: 12px;\n  border-radius: 50%;\n  background: var(--accent);\n  cursor: pointer;\n  border: none;\n}\n\n.duration-display {\n  display: flex;\n  align-items: baseline;\n  gap: 2px;\n  min-width: 48px;\n  justify-content: flex-end;\n}\n\n#duration-frames {\n  font-size: 13px;\n  font-weight: 600;\n  color: var(--accent);\n  font-family: var(--font-mono);\n}\n\n.duration-unit {\n  font-size: 10px;\n  color: var(--text-muted);\n}\n\n/* ── APPLY SECTION ── */\n.section--apply {\n  border-bottom: none;\n  padding-top: 10px;\n  padding-bottom: 12px;\n}\n\n.apply-btn {\n  width: 100%;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  gap: 8px;\n  padding: 10px 16px;\n  border-radius: var(--radius-md);\n  border: none;\n  background: var(--accent);\n  color: #fff;\n  font-size: 12px;\n  font-weight: 600;\n  cursor: pointer;\n  letter-spacing: 0.03em;\n  transition: background 0.12s, opacity 0.12s, transform 0.08s;\n}\n\n.apply-btn svg {\n  width: 14px;\n  height: 14px;\n}\n\n.apply-btn:hover:not(:disabled) {\n  background: var(--accent-h);\n}\n\n.apply-btn:active:not(:disabled) {\n  transform: scale(0.98);\n}\n\n.apply-btn:disabled {\n  background: var(--bg-element);\n  color: var(--text-muted);\n  cursor: not-allowed;\n  opacity: 0.7;\n}\n\n/* Feedback */\n.feedback-message {\n  margin-top: 8px;\n  font-size: 11px;\n  text-align: center;\n  min-height: 16px;\n  transition: color 0.2s;\n}\n\n.feedback-message--success { color: var(--success); }\n.feedback-message--error   { color: var(--error);   }\n.feedback-message--info    { color: var(--text-secondary); }\n\n/* ── EMPTY STATES ── */\n.empty-state {\n  padding: 20px 10px;\n  text-align: center;\n  color: var(--text-muted);\n  font-size: 11px;\n  line-height: 1.6;\n}\n/*$vite$:1*/";
+  document.head.appendChild(__vite_style__);
   const ZOOM_PRESETS = [
     {
       id: "zoom_in",
@@ -1342,26 +1345,6 @@
     camera: "Camera",
     special: "Special"
   };
-  const ppro$3 = require("premierepro");
-  function parseFrameRate(timebase) {
-    const parts = timebase.split("/");
-    if (parts.length !== 2) return 24;
-    const num = parseFloat(parts[0]);
-    const den = parseFloat(parts[1]);
-    if (den === 0) return 24;
-    return num / den;
-  }
-  function framesToTickTime(frame, timebase) {
-    return ppro$3.TickTime.createWithFrameAndFrameRate(frame, timebase);
-  }
-  function tickTimeToFrames(time, timebase) {
-    const fps = parseFrameRate(timebase);
-    return Math.round(time.seconds * fps);
-  }
-  function buildLocalKfTime(clipInPoint, frameOffset, timebase) {
-    const offsetTime = framesToTickTime(frameOffset, timebase);
-    return clipInPoint.add(offsetTime);
-  }
   const PREFIX = "[QuickTransitions]";
   const Logger = {
     info: (msg, ...args) => console.log(`${PREFIX} ${msg}`, ...args),
@@ -1369,237 +1352,36 @@
     error: (msg, ...args) => console.error(`${PREFIX} ERROR: ${msg}`, ...args),
     debug: (msg, ...args) => console.debug(`${PREFIX} DBG: ${msg}`, ...args)
   };
-  const ppro$2 = require("premierepro");
-  async function getSelectedVideoClips() {
-    const project = await ppro$2.Project.getActiveProject();
-    if (!project) throw new Error("No active project");
-    const sequence = await project.getActiveSequence();
-    if (!sequence) throw new Error("No active sequence");
-    const selection = await sequence.getSelection();
-    const trackItems = await selection.getTrackItems();
-    const videoClips = [];
-    for (const item of trackItems) {
-      if ("getComponentChain" in item && typeof item.getComponentChain === "function") {
-        videoClips.push(item);
-      }
-    }
-    return videoClips;
-  }
-  const MATCH_NAMES = {
-    MOTION: ["AE.ADBE Motion", "ADBE Motion"],
-    OPACITY: ["AE.ADBE Opacity", "ADBE Opacity"]
-  };
-  const MOTION_PARAM = {
-    POSITION: 0,
-    // PointF — pixels from top-left, center ≈ {seqW/2, seqH/2}
-    SCALE: 1,
-    // number — 100 = 100%
-    SCALE_WIDTH: 2,
-    // number (when uniform scale is unlinked)
-    SCALE_HEIGHT: 3,
-    ROTATION: 4,
-    // number — degrees, positive = CW
-    ANCHOR: 5
-    // PointF
-  };
-  const OPACITY_PARAM = {
-    OPACITY: 0
-    // number 0–100
-  };
-  async function findComponent(clip, candidateMatchNames) {
-    const chain = await clip.getComponentChain();
-    const count = chain.getComponentCount();
-    for (let i = 0; i < count; i++) {
-      const comp = chain.getComponentAtIndex(i);
-      const matchName = await comp.getMatchName();
-      if (candidateMatchNames.includes(matchName)) {
-        return comp;
-      }
-    }
-    Logger.debug(`Component not found. Searched: ${candidateMatchNames.join(", ")}`);
-    return null;
-  }
-  async function getMotionComponent(clip) {
-    return findComponent(clip, MATCH_NAMES.MOTION);
-  }
-  async function getOpacityComponent(clip) {
-    return findComponent(clip, MATCH_NAMES.OPACITY);
-  }
-  async function getMotionParam(clip, paramIndex) {
-    const motion = await getMotionComponent(clip);
-    if (!motion) return null;
-    return motion.getParam(paramIndex);
-  }
-  async function getOpacityParam(clip) {
-    const opacityComp = await getOpacityComponent(clip);
-    if (!opacityComp) return null;
-    return opacityComp.getParam(OPACITY_PARAM.OPACITY);
-  }
-  const ppro$1 = require("premierepro");
-  function getInterpConstant(mode) {
-    const C = ppro$1.Constants;
-    switch (mode) {
-      case "LINEAR":
-        return C.INTERPOLATION_MODE_LINEAR;
-      case "HOLD":
-        return C.INTERPOLATION_MODE_HOLD;
-      case "EASE_IN":
-        return C.INTERPOLATION_MODE_EASE_IN ?? C.INTERPOLATION_MODE_BEZIER;
-      case "EASE_OUT":
-        return C.INTERPOLATION_MODE_EASE_OUT ?? C.INTERPOLATION_MODE_BEZIER;
-      case "BEZIER":
-      default:
-        return C.INTERPOLATION_MODE_BEZIER;
-    }
-  }
-  function buildParamKeyframeActions(param, specs) {
-    const actions = [];
-    actions.push(param.createSetTimeVaryingAction(true));
-    for (const spec of specs) {
-      const kf = param.createKeyframe(spec.value);
-      kf.position = spec.time;
-      actions.push(param.createAddKeyframeAction(kf));
-      actions.push(
-        param.createSetInterpolationAtKeyframeAction(
-          spec.time,
-          getInterpConstant(spec.interpolation),
-          false
-          // Update UI only after entire transaction commits
-        )
-      );
-    }
-    return actions;
-  }
-  async function commitActions(actions, undoLabel) {
-    if (actions.length === 0) return;
-    const project = await ppro$1.Project.getActiveProject();
-    await project.lockedAccess(() => {
-      project.executeTransaction((tx) => {
-        for (const action of actions) {
-          tx.executeAction(action);
+  function evalScript(script) {
+    return new Promise((resolve) => {
+      try {
+        const cep = window.__adobe_cep__;
+        if (!cep) {
+          resolve('{"count":0,"clips":[]}');
+          return;
         }
-      }, undoLabel);
+        cep.evalScript(script, (r) => resolve(r ?? "null"));
+      } catch (e) {
+        resolve(`{"error":"${String(e)}"}`);
+      }
     });
   }
-  const ppro = require("premierepro");
-  async function detectPositionCoordSystem(posParam, sampleTime) {
+  async function getClipInfo() {
+    const raw = await evalScript("getClipInfoJSON()");
     try {
-      const raw = await posParam.getValueAtTime(sampleTime);
-      if (raw && typeof raw.x === "number") {
-        return raw.x > 2 ? "pixels" : "normalized";
-      }
+      return JSON.parse(raw);
     } catch {
-    }
-    return "pixels";
-  }
-  function resolvePositionValue(offset, seqW, seqH, coordSystem) {
-    if (coordSystem === "pixels") {
-      return {
-        x: seqW / 2 + offset.xRatio * seqW,
-        y: seqH / 2 + offset.yRatio * seqH
-      };
-    }
-    return {
-      x: 0.5 + offset.xRatio * 0.5,
-      y: 0.5 + offset.yRatio * 0.5
-    };
-  }
-  async function resolveParam(clip, paramType) {
-    switch (paramType) {
-      case "scale":
-        return getMotionParam(clip, MOTION_PARAM.SCALE);
-      case "position":
-        return getMotionParam(clip, MOTION_PARAM.POSITION);
-      case "rotation":
-        return getMotionParam(clip, MOTION_PARAM.ROTATION);
-      case "opacity":
-        return getOpacityParam(clip);
-      default:
-        return null;
+      return { count: 0, clips: [] };
     }
   }
-  function reverseKeyframes(keyframes, targetDuration) {
-    const reversed = [...keyframes].reverse();
-    const n = reversed.length;
-    return reversed.map((kf, i) => ({
-      ...kf,
-      frame: n > 1 ? Math.round(i / (n - 1) * targetDuration) : 0
-    }));
-  }
-  function scaleKeyframes(keyframes, presetDuration, targetDuration) {
-    if (presetDuration === 0) return keyframes;
-    return keyframes.map((kf) => ({
-      ...kf,
-      frame: Math.round(kf.frame / presetDuration * targetDuration)
-    }));
-  }
-  async function applyTransition(clip, preset, options) {
+  async function applyTransitionCEP(preset, options) {
+    const p = JSON.stringify(JSON.stringify(preset));
+    const o = JSON.stringify(JSON.stringify(options));
+    const raw = await evalScript(`applyTransitionJSON(${p}, ${o})`);
     try {
-      const project = await ppro.Project.getActiveProject();
-      if (!project) return { success: false, message: "No active project" };
-      const sequence = await project.getActiveSequence();
-      if (!sequence) return { success: false, message: "No active sequence" };
-      const timebase = await sequence.getTimebase();
-      const seqSettings = await sequence.getSettings();
-      const seqW = seqSettings.videoFrameWidth;
-      const seqH = seqSettings.videoFrameHeight;
-      const fps = parseFrameRate(timebase);
-      const clipInPoint = await clip.getInPoint();
-      const clipDuration = await clip.getDuration();
-      const clipFrames = tickTimeToFrames(clipDuration, timebase);
-      const transitionFrames = options.durationFrames !== null ? options.durationFrames : Math.round(preset.duration * fps / 24);
-      if (transitionFrames >= clipFrames) {
-        return {
-          success: false,
-          message: `Clip too short (${clipFrames}f) for ${transitionFrames}f transition`
-        };
-      }
-      const windowStartFrame = options.placement === "beginning" ? 0 : clipFrames - transitionFrames;
-      const posParam = await getMotionParam(clip, MOTION_PARAM.POSITION);
-      let coordSystem = "pixels";
-      if (posParam) {
-        const sampleTime = buildLocalKfTime(clipInPoint, windowStartFrame, timebase);
-        coordSystem = await detectPositionCoordSystem(posParam, sampleTime);
-      }
-      const allActions = [];
-      for (const paramAnim of preset.parameters) {
-        const param = await resolveParam(clip, paramAnim.param);
-        if (!param) {
-          Logger.warn(`Param "${paramAnim.param}" not found on clip — skipping`);
-          continue;
-        }
-        let kfDefs = paramAnim.keyframes;
-        if (options.placement === "end") {
-          kfDefs = reverseKeyframes(kfDefs, preset.duration);
-        }
-        kfDefs = scaleKeyframes(kfDefs, preset.duration, transitionFrames);
-        const specs = kfDefs.map((kf) => {
-          const absoluteFrame = windowStartFrame + kf.frame;
-          const time = buildLocalKfTime(clipInPoint, absoluteFrame, timebase);
-          const value = typeof kf.value === "number" ? kf.value : resolvePositionValue(kf.value, seqW, seqH, coordSystem);
-          return { time, value, interpolation: kf.interpolation };
-        });
-        const paramActions = buildParamKeyframeActions(param, specs);
-        allActions.push(...paramActions);
-      }
-      if (allActions.length === 0) {
-        return { success: false, message: "No animatable parameters found on clip" };
-      }
-      await commitActions(
-        allActions,
-        `Quick Transitions: ${preset.name} (${options.placement})`
-      );
-      Logger.info(
-        `Applied "${preset.name}" at ${options.placement} — ${allActions.length} actions`
-      );
-      return {
-        success: true,
-        message: `Applied "${preset.name}" at ${options.placement}`
-      };
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : String(err);
-      Logger.error("applyTransition failed:", msg);
-      return { success: false, message: msg };
+      return JSON.parse(raw);
+    } catch {
+      return { success: false, message: "Błąd komunikacji z Premiere Pro" };
     }
   }
   const state = {
@@ -1607,7 +1389,7 @@
     selectedPreset: null,
     placement: "beginning",
     durationFrames: 12,
-    clipName: null,
+    clipCount: 0,
     isApplying: false
   };
   const el = {
@@ -1626,8 +1408,7 @@
   function renderCategories() {
     const nav = el.categoryNav();
     nav.innerHTML = "";
-    const categories = registry.getCategories();
-    for (const cat of categories) {
+    for (const cat of registry.getCategories()) {
       const btn = document.createElement("button");
       btn.className = `category-btn${cat === state.selectedCategory ? " category-btn--active" : ""}`;
       btn.textContent = CATEGORY_LABELS[cat];
@@ -1671,8 +1452,7 @@
         <div class="card-params">
           ${Array.from(paramSet).map((p) => `<span class="param-badge param-badge--${p}">${PARAM_ABBREV[p] ?? p.slice(0, 3).toUpperCase()}</span>`).join("")}
         </div>
-      </div>
-    `;
+      </div>`;
       card.addEventListener("click", () => {
         state.selectedPreset = preset;
         el.durationSlider().value = String(preset.duration);
@@ -1706,20 +1486,16 @@
   let pollInterval = null;
   async function pollClipSelection() {
     try {
-      const clips = await getSelectedVideoClips();
-      if (clips.length > 0) {
-        const firstName = `${clips.length} clip${clips.length > 1 ? "s" : ""} selected`;
-        if (state.clipName !== firstName) {
-          state.clipName = firstName;
-          updateClipStatus(firstName, true);
-          updateApplyButton();
+      const info = await getClipInfo();
+      const count = info.count ?? 0;
+      if (count !== state.clipCount) {
+        state.clipCount = count;
+        if (count > 0) {
+          updateClipStatus(`${count} klip${count > 1 ? "y/ów" : ""} wybrany/-ch`, true);
+        } else {
+          updateClipStatus("Brak wybranego klipu", false);
         }
-      } else {
-        if (state.clipName !== null) {
-          state.clipName = null;
-          updateClipStatus("No clip selected", false);
-          updateApplyButton();
-        }
+        updateApplyButton();
       }
     } catch {
     }
@@ -1729,48 +1505,25 @@
     pollInterval = setInterval(pollClipSelection, 800);
   }
   function updateClipStatus(name, selected) {
-    const status = el.clipStatus();
-    const label = el.clipNameLabel();
-    status.className = `clip-status ${selected ? "clip-status--selected" : "clip-status--none"}`;
-    label.textContent = name;
+    el.clipStatus().className = `clip-status ${selected ? "clip-status--selected" : "clip-status--none"}`;
+    el.clipNameLabel().textContent = name;
   }
   function updateApplyButton() {
-    const btn = el.applyBtn();
-    const canApply = state.selectedPreset !== null && state.clipName !== null && !state.isApplying;
-    btn.disabled = !canApply;
+    el.applyBtn().disabled = !(state.selectedPreset !== null && state.clipCount > 0 && !state.isApplying);
   }
   async function handleApply() {
     if (!state.selectedPreset || state.isApplying) return;
     state.isApplying = true;
     updateApplyButton();
-    showFeedback("Applying…", "info");
+    showFeedback("Stosowanie…", "info");
     try {
-      const clips = await getSelectedVideoClips();
-      if (clips.length === 0) {
-        showFeedback("Select a clip on the timeline first", "error");
-        return;
-      }
-      let successCount = 0;
-      let lastError = "";
-      for (const clip of clips) {
-        const result = await applyTransition(clip, state.selectedPreset, {
-          placement: state.placement,
-          durationFrames: state.durationFrames
-        });
-        if (result.success) {
-          successCount++;
-        } else {
-          lastError = result.message;
-        }
-      }
-      if (successCount > 0) {
-        const msg = clips.length > 1 ? `Applied to ${successCount}/${clips.length} clips` : `"${state.selectedPreset.name}" applied at ${state.placement}`;
-        showFeedback(msg, "success");
-      } else {
-        showFeedback(lastError || "Apply failed", "error");
-      }
+      const result = await applyTransitionCEP(state.selectedPreset, {
+        placement: state.placement,
+        durationFrames: state.durationFrames
+      });
+      showFeedback(result.message, result.success ? "success" : "error");
     } catch (err) {
-      const msg = err instanceof Error ? err.message : "Unexpected error";
+      const msg = err instanceof Error ? err.message : "Nieoczekiwany błąd";
       Logger.error("handleApply:", msg);
       showFeedback(msg, "error");
     } finally {
@@ -1780,30 +1533,26 @@
   }
   let feedbackTimer = null;
   function showFeedback(msg, type) {
-    const el_fb = el.feedback();
-    el_fb.textContent = msg;
-    el_fb.className = `feedback-message feedback-message--${type}`;
+    const fb = el.feedback();
+    fb.textContent = msg;
+    fb.className = `feedback-message feedback-message--${type}`;
     if (feedbackTimer) clearTimeout(feedbackTimer);
     if (type !== "info") {
       feedbackTimer = setTimeout(() => {
-        el_fb.textContent = "";
-        el_fb.className = "feedback-message";
+        fb.textContent = "";
+        fb.className = "feedback-message";
       }, 4e3);
     }
   }
   function initApp() {
     Logger.info(`Initializing — ${registry.count()} presets loaded`);
-    const link = document.createElement("link");
-    link.rel = "stylesheet";
-    link.href = "./src/ui/styles.css";
-    document.head.appendChild(link);
     renderCategories();
     renderTransitionGrid();
     initPlacementButtons();
     initDurationSlider();
     el.applyBtn().addEventListener("click", handleApply);
     updateApplyButton();
-    updateClipStatus("No clip selected", false);
+    updateClipStatus("Brak wybranego klipu", false);
     startPolling();
   }
   if (document.readyState === "loading") {

@@ -1,7 +1,7 @@
 {
   "name": "quick-transition-builder",
   "version": "1.0.0",
-  "description": "Professional transition builder plugin for Adobe Premiere Pro",
+  "description": "Professional transition builder plugin for Adobe Premiere Pro (CEP)",
   "private": true,
   "scripts": {
     "dev": "vite build --watch",
@@ -9,7 +9,6 @@
     "type-check": "tsc --noEmit"
   },
   "devDependencies": {
-    "@adobe/premierepro": "^26.2.0",
     "typescript": "^5.4.0",
     "vite": "^5.2.0"
   }

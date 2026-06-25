@@ -7,11 +7,7 @@ export default defineConfig({
     emptyOutDir: true,
     rollupOptions: {
       input: resolve(__dirname, "index.html"),
-      external: ["premierepro"],
       output: {
-        globals: {
-          premierepro: "require('premierepro')",
-        },
         format: "iife",
       },
     },

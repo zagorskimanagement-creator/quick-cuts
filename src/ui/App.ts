@@ -1,60 +1,87 @@
 import { registry } from "../presets/registry";
 import type { TransitionPreset, TransitionCategory, TransitionPlacement } from "../presets/types";
 import { CATEGORY_LABELS } from "../presets/types";
-import { getSelectedVideoClips } from "../core/ClipService";
-import { applyTransition } from "../core/TransitionEngine";
 import { Logger } from "../utils/Logger";
 
-// ──────────────────────────────────────────────────────────────────────────
-// STATE
-// ──────────────────────────────────────────────────────────────────────────
+// ── CEP Bridge ────────────────────────────────────────────────────────────────
+
+interface ClipInfo { index: number; name: string; durationFrames: number; }
+interface ClipInfoResponse { count: number; clips: ClipInfo[]; error?: string; }
+interface ApplyResponse { success: boolean; message: string; }
+
+function evalScript(script: string): Promise<string> {
+  return new Promise((resolve) => {
+    try {
+      const cep = (window as unknown as Record<string, unknown>).__adobe_cep__ as
+        { evalScript(s: string, cb: (r: string) => void): void } | undefined;
+      if (!cep) { resolve('{"count":0,"clips":[]}'); return; }
+      cep.evalScript(script, (r) => resolve(r ?? "null"));
+    } catch (e) {
+      resolve(`{"error":"${String(e)}"}`);
+    }
+  });
+}
+
+async function getClipInfo(): Promise<ClipInfoResponse> {
+  const raw = await evalScript("getClipInfoJSON()");
+  try { return JSON.parse(raw) as ClipInfoResponse; }
+  catch { return { count: 0, clips: [] }; }
+}
+
+async function applyTransitionCEP(
+  preset: TransitionPreset,
+  options: { placement: TransitionPlacement; durationFrames: number }
+): Promise<ApplyResponse> {
+  // Double-stringify so the JSON string is safely embedded as a JSX string argument
+  const p = JSON.stringify(JSON.stringify(preset));
+  const o = JSON.stringify(JSON.stringify(options));
+  const raw = await evalScript(`applyTransitionJSON(${p}, ${o})`);
+  try { return JSON.parse(raw) as ApplyResponse; }
+  catch { return { success: false, message: "Błąd komunikacji z Premiere Pro" }; }
+}
+
+// ── State ─────────────────────────────────────────────────────────────────────
 
 interface AppState {
   selectedCategory: TransitionCategory;
-  selectedPreset: TransitionPreset | null;
-  placement: TransitionPlacement;
-  durationFrames: number;
-  clipName: string | null;
-  isApplying: boolean;
+  selectedPreset:   TransitionPreset | null;
+  placement:        TransitionPlacement;
+  durationFrames:   number;
+  clipCount:        number;
+  isApplying:       boolean;
 }
 
 const state: AppState = {
   selectedCategory: "zoom",
-  selectedPreset: null,
-  placement: "beginning",
-  durationFrames: 12,
-  clipName: null,
-  isApplying: false,
+  selectedPreset:   null,
+  placement:        "beginning",
+  durationFrames:   12,
+  clipCount:        0,
+  isApplying:       false,
 };
 
-// ──────────────────────────────────────────────────────────────────────────
-// DOM ELEMENT CACHE
-// ──────────────────────────────────────────────────────────────────────────
+// ── DOM helpers ───────────────────────────────────────────────────────────────
 
 const el = {
-  categoryNav:   () => document.getElementById("category-nav")!,
+  categoryNav:    () => document.getElementById("category-nav")!,
   transitionGrid: () => document.getElementById("transition-grid")!,
-  clipStatus:    () => document.getElementById("clip-status")!,
-  clipNameLabel: () => document.getElementById("clip-name-label")!,
-  presetCount:   () => document.getElementById("preset-count")!,
-  btnBeginning:  () => document.getElementById("btn-beginning")! as HTMLButtonElement,
-  btnEnd:        () => document.getElementById("btn-end")! as HTMLButtonElement,
+  clipStatus:     () => document.getElementById("clip-status")!,
+  clipNameLabel:  () => document.getElementById("clip-name-label")!,
+  presetCount:    () => document.getElementById("preset-count")!,
+  btnBeginning:   () => document.getElementById("btn-beginning")!  as HTMLButtonElement,
+  btnEnd:         () => document.getElementById("btn-end")!         as HTMLButtonElement,
   durationSlider: () => document.getElementById("duration-slider")! as HTMLInputElement,
   durationFrames: () => document.getElementById("duration-frames")!,
-  applyBtn:      () => document.getElementById("apply-btn")! as HTMLButtonElement,
-  feedback:      () => document.getElementById("feedback-message")!,
+  applyBtn:       () => document.getElementById("apply-btn")!       as HTMLButtonElement,
+  feedback:       () => document.getElementById("feedback-message")!,
 };
 
-// ──────────────────────────────────────────────────────────────────────────
-// RENDER — CATEGORIES
-// ──────────────────────────────────────────────────────────────────────────
+// ── Render: categories ────────────────────────────────────────────────────────
 
 function renderCategories(): void {
   const nav = el.categoryNav();
   nav.innerHTML = "";
-
-  const categories = registry.getCategories();
-  for (const cat of categories) {
+  for (const cat of registry.getCategories()) {
     const btn = document.createElement("button");
     btn.className = `category-btn${cat === state.selectedCategory ? " category-btn--active" : ""}`;
     btn.textContent = CATEGORY_LABELS[cat];
@@ -70,9 +97,7 @@ function renderCategories(): void {
   }
 }
 
-// ──────────────────────────────────────────────────────────────────────────
-// RENDER — TRANSITION GRID
-// ──────────────────────────────────────────────────────────────────────────
+// ── Render: grid ──────────────────────────────────────────────────────────────
 
 const PARAM_ABBREV: Record<string, string> = {
   scale: "SCL", position: "POS", rotation: "ROT", opacity: "OPC",
@@ -81,7 +106,6 @@ const PARAM_ABBREV: Record<string, string> = {
 function renderTransitionGrid(): void {
   const grid = el.transitionGrid();
   grid.innerHTML = "";
-
   const presets = registry.getByCategory(state.selectedCategory);
   el.presetCount().textContent = `${presets.length} transitions`;
 
@@ -97,7 +121,6 @@ function renderTransitionGrid(): void {
     card.title = preset.description;
 
     const paramSet = new Set(preset.parameters.map((p) => p.param));
-
     card.innerHTML = `
       <div class="card-name">${preset.name}</div>
       <div class="card-meta">
@@ -107,26 +130,21 @@ function renderTransitionGrid(): void {
             .map((p) => `<span class="param-badge param-badge--${p}">${PARAM_ABBREV[p] ?? p.slice(0, 3).toUpperCase()}</span>`)
             .join("")}
         </div>
-      </div>
-    `;
+      </div>`;
 
     card.addEventListener("click", () => {
       state.selectedPreset = preset;
-      // Sync duration slider to preset reference duration (scaled from 24fps)
       el.durationSlider().value = String(preset.duration);
       state.durationFrames = preset.duration;
       el.durationFrames().textContent = String(preset.duration);
-      renderTransitionGrid(); // re-render to update selection highlight
+      renderTransitionGrid();
       updateApplyButton();
     });
-
     grid.appendChild(card);
   }
 }
 
-// ──────────────────────────────────────────────────────────────────────────
-// PLACEMENT BUTTONS
-// ──────────────────────────────────────────────────────────────────────────
+// ── Controls ──────────────────────────────────────────────────────────────────
 
 function initPlacementButtons(): void {
   el.btnBeginning().addEventListener("click", () => {
@@ -134,17 +152,12 @@ function initPlacementButtons(): void {
     el.btnBeginning().classList.add("placement-btn--active");
     el.btnEnd().classList.remove("placement-btn--active");
   });
-
   el.btnEnd().addEventListener("click", () => {
     state.placement = "end";
     el.btnEnd().classList.add("placement-btn--active");
     el.btnBeginning().classList.remove("placement-btn--active");
   });
 }
-
-// ──────────────────────────────────────────────────────────────────────────
-// DURATION SLIDER
-// ──────────────────────────────────────────────────────────────────────────
 
 function initDurationSlider(): void {
   el.durationSlider().addEventListener("input", (e) => {
@@ -154,33 +167,25 @@ function initDurationSlider(): void {
   });
 }
 
-// ──────────────────────────────────────────────────────────────────────────
-// CLIP SELECTION POLLING
-// ──────────────────────────────────────────────────────────────────────────
+// ── Clip polling ──────────────────────────────────────────────────────────────
 
 let pollInterval: ReturnType<typeof setInterval> | null = null;
 
 async function pollClipSelection(): Promise<void> {
   try {
-    const clips = await getSelectedVideoClips();
-    if (clips.length > 0) {
-      // Use the first selected clip's project item name
-      // (getProjectItem is async so we cache a simple flag)
-      const firstName = `${clips.length} clip${clips.length > 1 ? "s" : ""} selected`;
-      if (state.clipName !== firstName) {
-        state.clipName = firstName;
-        updateClipStatus(firstName, true);
-        updateApplyButton();
+    const info = await getClipInfo();
+    const count = info.count ?? 0;
+    if (count !== state.clipCount) {
+      state.clipCount = count;
+      if (count > 0) {
+        updateClipStatus(`${count} klip${count > 1 ? "y/ów" : ""} wybrany/-ch`, true);
+      } else {
+        updateClipStatus("Brak wybranego klipu", false);
       }
-    } else {
-      if (state.clipName !== null) {
-        state.clipName = null;
-        updateClipStatus("No clip selected", false);
-        updateApplyButton();
-      }
+      updateApplyButton();
     }
   } catch {
-    // Normal when no project/sequence is open — silently ignore
+    // No project/sequence open — ignore silently
   }
 }
 
@@ -190,65 +195,33 @@ function startPolling(): void {
 }
 
 function updateClipStatus(name: string, selected: boolean): void {
-  const status = el.clipStatus();
-  const label = el.clipNameLabel();
-  status.className = `clip-status ${selected ? "clip-status--selected" : "clip-status--none"}`;
-  label.textContent = name;
+  el.clipStatus().className = `clip-status ${selected ? "clip-status--selected" : "clip-status--none"}`;
+  el.clipNameLabel().textContent = name;
 }
 
-// ──────────────────────────────────────────────────────────────────────────
-// APPLY BUTTON STATE
-// ──────────────────────────────────────────────────────────────────────────
+// ── Apply button ──────────────────────────────────────────────────────────────
 
 function updateApplyButton(): void {
-  const btn = el.applyBtn();
-  const canApply = state.selectedPreset !== null && state.clipName !== null && !state.isApplying;
-  btn.disabled = !canApply;
+  el.applyBtn().disabled = !(state.selectedPreset !== null && state.clipCount > 0 && !state.isApplying);
 }
 
-// ──────────────────────────────────────────────────────────────────────────
-// APPLY TRANSITION
-// ──────────────────────────────────────────────────────────────────────────
+// ── Apply handler ─────────────────────────────────────────────────────────────
 
 async function handleApply(): Promise<void> {
   if (!state.selectedPreset || state.isApplying) return;
 
   state.isApplying = true;
   updateApplyButton();
-  showFeedback("Applying…", "info");
+  showFeedback("Stosowanie…", "info");
 
   try {
-    const clips = await getSelectedVideoClips();
-    if (clips.length === 0) {
-      showFeedback("Select a clip on the timeline first", "error");
-      return;
-    }
-
-    let successCount = 0;
-    let lastError = "";
-
-    for (const clip of clips) {
-      const result = await applyTransition(clip, state.selectedPreset!, {
-        placement: state.placement,
-        durationFrames: state.durationFrames,
-      });
-      if (result.success) {
-        successCount++;
-      } else {
-        lastError = result.message;
-      }
-    }
-
-    if (successCount > 0) {
-      const msg = clips.length > 1
-        ? `Applied to ${successCount}/${clips.length} clips`
-        : `"${state.selectedPreset!.name}" applied at ${state.placement}`;
-      showFeedback(msg, "success");
-    } else {
-      showFeedback(lastError || "Apply failed", "error");
-    }
+    const result = await applyTransitionCEP(state.selectedPreset, {
+      placement:      state.placement,
+      durationFrames: state.durationFrames,
+    });
+    showFeedback(result.message, result.success ? "success" : "error");
   } catch (err) {
-    const msg = err instanceof Error ? err.message : "Unexpected error";
+    const msg = err instanceof Error ? err.message : "Nieoczekiwany błąd";
     Logger.error("handleApply:", msg);
     showFeedback(msg, "error");
   } finally {
@@ -257,48 +230,33 @@ async function handleApply(): Promise<void> {
   }
 }
 
-// ──────────────────────────────────────────────────────────────────────────
-// FEEDBACK
-// ──────────────────────────────────────────────────────────────────────────
+// ── Feedback ──────────────────────────────────────────────────────────────────
 
 let feedbackTimer: ReturnType<typeof setTimeout> | null = null;
 
 function showFeedback(msg: string, type: "success" | "error" | "info"): void {
-  const el_fb = el.feedback();
-  el_fb.textContent = msg;
-  el_fb.className = `feedback-message feedback-message--${type}`;
+  const fb = el.feedback();
+  fb.textContent = msg;
+  fb.className = `feedback-message feedback-message--${type}`;
   if (feedbackTimer) clearTimeout(feedbackTimer);
   if (type !== "info") {
     feedbackTimer = setTimeout(() => {
-      el_fb.textContent = "";
-      el_fb.className = "feedback-message";
+      fb.textContent = "";
+      fb.className = "feedback-message";
     }, 4000);
   }
 }
 
-// ──────────────────────────────────────────────────────────────────────────
-// INIT
-// ──────────────────────────────────────────────────────────────────────────
+// ── Init ──────────────────────────────────────────────────────────────────────
 
 export function initApp(): void {
   Logger.info(`Initializing — ${registry.count()} presets loaded`);
-
-  // Inject stylesheet
-  const link = document.createElement("link");
-  link.rel = "stylesheet";
-  link.href = "./src/ui/styles.css";
-  document.head.appendChild(link);
-
   renderCategories();
   renderTransitionGrid();
   initPlacementButtons();
   initDurationSlider();
-
   el.applyBtn().addEventListener("click", handleApply);
-
-  // Initial state
   updateApplyButton();
-  updateClipStatus("No clip selected", false);
-
+  updateClipStatus("Brak wybranego klipu", false);
   startPolling();
 }

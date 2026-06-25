@@ -1,4 +1,4 @@
-import type { InterpolationMode } from "../core/KeyframeService";
+export type InterpolationMode = "BEZIER" | "LINEAR" | "HOLD" | "EASE_IN" | "EASE_OUT";
 
 // ──────────────────────────────────────────────────────────────────────────
 // PRESET CATEGORIES
