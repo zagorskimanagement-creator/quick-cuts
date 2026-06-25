@@ -3,10 +3,12 @@
   "name": "Quick Transition Builder",
   "version": "1.0.0",
   "manifestVersion": 5,
-  "host": {
-    "app": "PPRO",
-    "minVersion": "22.0"
-  },
+  "host": [
+    {
+      "app": "PPRO",
+      "minVersion": "22.0"
+    }
+  ],
   "entrypoints": [
     {
       "type": "panel",
@@ -28,8 +30,5 @@
         "height": 680
       }
     }
-  ],
-  "requiredPermissions": {
-    "allowCodeGenerationFromStrings": false
-  }
+  ]
 }
