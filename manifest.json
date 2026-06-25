@@ -2,13 +2,11 @@
   "id": "com.quickcuts.transitionbuilder",
   "name": "Quick Transition Builder",
   "version": "1.0.0",
-  "manifestVersion": 6,
-  "host": [
-    {
-      "app": "PPRO",
-      "minVersion": "25.0"
-    }
-  ],
+  "manifestVersion": 5,
+  "host": {
+    "app": "PPRO",
+    "minVersion": "22.0"
+  },
   "entrypoints": [
     {
       "type": "panel",
